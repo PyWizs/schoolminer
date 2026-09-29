@@ -11,6 +11,7 @@ class ProxyServer:
 
     def start(self):
         asyncio.run(self._start())
+        print("Proxy Started")
 
     async def _start(self):
         server = pproxy.Server(
