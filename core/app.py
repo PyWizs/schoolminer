@@ -4,6 +4,8 @@ from network.proxy import ProxyServer
 from network.discovery import Discovery
 from network.transport import NetworkSocket
 
+from miner.miner import Miner
+
 import threading
 import time
 
@@ -11,6 +13,7 @@ class App:
     def __init__(self):
         self.network = NetworkSocket()
         self.proxysv = ProxyServer()
+        self.miner = Miner()
         self.discovery = Discovery(self.network)
 
         self.threadproxy = None
@@ -25,4 +28,5 @@ class App:
 
         while True:
             self.discovery.find_internet_peer()
+            self.miner.start_mining(self.discovery.proxynow)
             time.sleep(200)

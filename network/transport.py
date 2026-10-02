@@ -1,10 +1,7 @@
 import socket
-
+import config
 
 class NetworkSocket:
-
-    PORT = 60000
-
     def __init__(self, callback=None):
         self.sock = socket.socket(
             socket.AF_INET,
@@ -17,7 +14,7 @@ class NetworkSocket:
             1
         )
 
-        self.sock.bind(("0.0.0.0", self.PORT))
+        self.sock.bind(("0.0.0.0", config.PROGRAMPORT))
 
         self.callback = callback
 
@@ -30,9 +27,10 @@ class NetworkSocket:
             )
             ip = "255.255.255.255"
 
+        print(f"sending data {data} to ip {ip}")
         self.sock.sendto(
             data.encode(),
-            (ip, self.PORT)
+            (ip, config.PROGRAMPORT)
         )
 
     def receive(self):

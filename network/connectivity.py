@@ -4,10 +4,11 @@ import socket
 import socks
 from urllib.parse import urlparse
 
+import config
 
 def has_internet(proxy=None):
     try:
-        if proxy and not proxy == "socks5://127.0.0.1:8080":
+        if proxy and not proxy == f"socks5://127.0.0.1:{config.PROXYPORT}":
             parsed = urlparse(proxy)
 
             sock = socks.socksocket()
@@ -26,7 +27,9 @@ def has_internet(proxy=None):
         sock.connect(("1.1.1.1", 53))
         sock.close()
 
+        print("HAVE INTERNET")
         return True
 
     except (OSError, ValueError):
+        print("NO INTERNET")
         return False
