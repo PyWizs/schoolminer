@@ -6,13 +6,15 @@ from network.transport import NetworkSocket
 
 from miner.miner import Miner
 
+import config
+
 import threading
 import time
 
 class App:
     def __init__(self):
         self.network = NetworkSocket()
-        self.proxysv = ProxyServer()
+        self.proxysv = ProxyServer(port=config.PROXYPORT)
         self.miner = Miner()
         self.discovery = Discovery(self.network)
 
@@ -25,6 +27,8 @@ class App:
 
         self.threadnetwork = threading.Thread(target=self.network.receive, daemon=True)
         self.threadnetwork.start()
+
+        time.sleep(5)
 
         while True:
             self.discovery.find_internet_peer()

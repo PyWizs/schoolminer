@@ -28,12 +28,17 @@ class Miner:
     def start_mining(self, proxynow):
         if proxynow is None:
             print("NO INTERNET")
+            if self.miner is not None and self.miner.poll() is None:
+                self.stop_miner(self.miner)
+            self.lastusedproxy = None
             return
 
-        if proxynow == self.lastusedproxy:
+        alive = self.miner is not None and self.miner.poll() is None
+
+        if proxynow == self.lastusedproxy and alive:
             return
 
-        if self.miner is not None and self.miner.poll() is None:
+        if alive:
             print("Stopping Previous XMRig...")
             self.stop_miner(self.miner)
 
@@ -43,8 +48,12 @@ class Miner:
         cmd.append(proxynow)
 
         print("Starting XMRig...")
-
-        self.miner = subprocess.Popen(cmd)
+        try:
+            self.miner = subprocess.Popen(cmd)
+        except FileNotFoundError:
+            print(f"XMRig not found: {cmd[0]}")
+            self.miner = None
+            self.lastusedproxy = None
 
     def stop_miner(self, miner):
         if miner is None:
