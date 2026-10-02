@@ -1,15 +1,22 @@
-# miner/miner.py
-
+import platform
 import subprocess
+
 import config
 
+
+if platform.system() == "Windows":
+    XMRIG = "xmrig.exe"
+else:
+    XMRIG = "xmrig"
+
+
 command = [
-    "xmrig",
+    XMRIG,
     "-o", config.POOL,
     "-u", config.WALLET,
     "-p", "python-miner",
     "--coin", "monero",
-    "--proxy"
+    "--proxy",
 ]
 
 
@@ -35,11 +42,16 @@ class Miner:
         cmd = command.copy()
         cmd.append(proxynow)
 
+        print("Starting XMRig...")
+
         self.miner = subprocess.Popen(cmd)
 
     def stop_miner(self, miner):
         if miner is None:
             return
 
-        self.miner.terminate()
-        self.miner.wait()
+        if miner.poll() is None:
+            miner.terminate()
+            miner.wait()
+
+        self.miner = None
